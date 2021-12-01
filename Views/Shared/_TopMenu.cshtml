@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+
+    <link rel="icon" href="~/static/img/fav-icon.png" type="image/x-icon" />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Sweet - Cake</title>
+
+    <!-- Icon css link -->
+    <link href="~/static/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/static/vendors/linearicons/style.css" rel="stylesheet">
+    <link href="~/static/vendors/flat-icon/flaticon.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="~/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Rev slider css -->
+    <link href="~/static/vendors/revolution/css/settings.css" rel="stylesheet">
+    <link href="~/static/vendors/revolution/css/layers.css" rel="stylesheet">
+    <link href="~/static/vendors/revolution/css/navigation.css" rel="stylesheet">
+    <link href="~/static/vendors/animate-css/animate.css" rel="stylesheet">
+
+    <!-- Extra plugin css -->
+    <link href="~/static/vendors/owl-carousel/owl.carousel.min.css" rel="stylesheet">
+    <link href="~/static/vendors/magnifc-popup/magnific-popup.css" rel="stylesheet">
+
+    <link href="~/static/css/style.css" rel="stylesheet">
+    <link href="~/static/css/responsive.css" rel="stylesheet">
+
+    <link href="~/element-ui/index.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="~/element-ui/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <style>
+        .uimg {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+        }
+
+        .users-img span {
+            display: none;
+        }
+
+        button, input {
+            outline: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="app11">
+        <header class="main_header_area">
+            <div class="top_header_area row m0">
+                <div class="container">
+                    <div class="float-left">
+                        <a href="#"><i class="fa fa-phone" aria-hidden="true"></i> + (1800) 456 7890</a>
+                        <a href="#"><i class="fa fa-envelope-o" aria-hidden="true"></i> 2776276474@qq.com</a>
+                    </div>
+                    <div class="float-right">
+                        <ul class="h_social list_style">
+                            @*购物车*@
+                            <li class="shop_cart"><a href="#"><i class="lnr lnr-cart"></i></a></li>
+                            <li><a class="popup-with-zoom-anim" href="#test-search"><i class="fa fa-search"></i></a></li>
+
+                        </ul>
+                        <ul class="h_search list_style">
+                            @*登录*@
+                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                            <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="main_menu_area">
+                <div class="container">
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                        <a class="navbar-brand" href="index.html">
+                            <img src="~/static/img/logo.png" height="97" width="97" style="margin-top:-7px" />
+                            @*<img src="~/static/img/logo-2.png" alt="">*@
+                        </a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="my_toggle_menu">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav mr-auto">
+                                <li class="dropdown submenu active">
+                                    <a href="/Cake/Index">首页</a>
+
+                                </li>
+                                <li><a href="/Cake/Products">蛋糕</a></li>
+                                @*<li><a href="menu.html">专区</a></li>*@
+                                <li class="dropdown submenu">
+                                    <a href="/Cake/About">店铺介绍</a>
+                                </li>
+
+                            </ul>
+                            <ul class="navbar-nav justify-content-end">
+                                <li class="dropdown submenu">
+                                    <a href="/Cake/Cart">购物车</a>
+                                </li>
+                                <li class="dropdown submenu">
+                                    <a href="/Cake/Personal">个人中心</a>
+                                </li>
+                                <li class="users"><a href="/Cake/Login">登录</a></li>
+                                <li class="users"><a href="/Cake/Register">注册</a></li>
+                                <li class="users-img">
+                                    <a href="/Cake/Login">
+                                        <span class="uimg-name">@Session["id"]</span>
+                                        <img :src="Baseimg+img" class="uimg" />
+                                    </a>
+
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </header>
+    </div>
+    
+
+    <script>
+        $(document).ready(function () {
+            var span = $(".uimg-name").html();
+            console.log(span);
+            if (span == "") {
+                $(".users-img").hide();
+            } else {
+                $(".users").hide();
+                $(".users-img").show();
+            }
+
+        });
+    </script>
+    <script>
+        var mather = null;
+        var Main = {
+            data() {
+                return {
+                    Baseimg: "https://tcr-1308226713.cos.ap-guangzhou.myqcloud.com/Picture/",
+                    img: "",
+                }
+            },
+            created() {
+                this.showimg();
+                mather = this;
+            },
+            methods: {
+                async showimg() {
+                    const { data: res } = await axios.get("/Cake/Showimg");
+                    console.log(res);
+                    this.img = res;
+                }
+            }
+        }
+        var Ctor = Vue.extend(Main)
+        new Ctor().$mount('#app11')
+    </script>
+
+    @RenderBody()
+
+    @*底部*@
+    <!--================Footer Area =================-->
+    <footer class="footer_area">
+        <div class="footer_widgets">
+            <div class="container">
+                <div class="row footer_wd_inner">
+                    <div class="col-lg-3 col-4">
+                        <aside class="f_widget f_about_widget">
+                            @* logo *@
+                            @*<img src="~/static/img/footer-logo.png" alt="">*@
+                            <p>我们始终把健康、营养放第一位，坚持用最简单最原生态的食材搭配，传统的手工技艺来制造美味的烘焙食品，希望能带给您不一样的烘焙食品，真诚期待您的品尝。</p>
+
+                        </aside>
+                    </div>
+
+                    <div class="col-lg-3 col-4">
+                        <aside class="f_widget f_link_widget">
+                            <div class="f_title">
+                                <h3>预约时间</h3>
+                            </div>
+                            <ul class="list_style">
+                                <li><a href="#">每天: 8 : 00 - 20 : 00</a></li>
+                                <li><a href="#">注意：</a></li>
+                                <li><a href="#">订购蛋糕需提前3小时！！！</a></li>
+                            </ul>
+                        </aside>
+                    </div>
+                    <div class="col-lg-3 col-4">
+                        <aside class="f_widget f_contact_widget">
+                            <div class="f_title">
+                                <h3>联系我们</h3>
+                            </div>
+                            <h4>(1800) 574 9687</h4>
+                            <p>永州职院</p>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </footer>
+    <!--================End Footer Area =================-->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="~/static/js/jquery-3.2.1.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="~/static/js/popper.min.js"></script>
+    <script src="~/static/js/bootstrap.min.js"></script>
+    <!-- Rev slider js -->
+    <script src="~/static/vendors/revolution/js/jquery.themepunch.tools.min.js"></script>
+    <script src="~/static/vendors/revolution/js/jquery.themepunch.revolution.min.js"></script>
+    <script src="~/static/vendors/revolution/js/extensions/revolution.extension.actions.min.js"></script>
+    <script src="~/static/vendors/revolution/js/extensions/revolution.extension.video.min.js"></script>
+    <script src="~/static/vendors/revolution/js/extensions/revolution.extension.slideanims.min.js"></script>
+    <script src="~/static/vendors/revolution/js/extensions/revolution.extension.layeranimation.min.js"></script>
+    <script src="~/static/vendors/revolution/js/extensions/revolution.extension.navigation.min.js"></script>
+    <!-- Extra plugin js -->
+    <script src="~/static/vendors/owl-carousel/owl.carousel.min.js"></script>
+    <script src="~/static/vendors/magnifc-popup/jquery.magnific-popup.min.js"></script>
+    <script src="~/static/vendors/datetime-picker/js/moment.min.js"></script>
+    <script src="~/static/vendors/datetime-picker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/static/vendors/nice-select/js/jquery.nice-select.min.js"></script>
+    <script src="~/static/vendors/jquery-ui/jquery-ui.min.js"></script>
+    <script src="~/static/vendors/lightbox/simpleLightbox.min.js"></script>
+
+    <script src="~/static/js/theme.js"></script>
+</body>
+</html>

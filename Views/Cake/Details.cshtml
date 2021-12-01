@@ -1,0 +1,179 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_TopMenu.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+
+
+</head>
+<body>
+    <section class="banner_area" style="margin-top:130px;">
+        <div class="container">
+            <div class="banner_text">
+                <h3>蛋糕详情</h3>
+            </div>
+        </div>
+    </section>
+
+    <div id="appps">
+        <section class="product_details_area p_100">
+            <div class="container">
+                <div class="row product_d_price">
+                    <div class="col-lg-6">
+                        <div class="product_img"><img class="img-fluid" :src="Baseimg+pimg" alt=""></div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="product_details_text">
+                            <h4>{{pname}}</h4>
+                            <p>鲜奶油，打发</p>
+                            <h5>价格 :<span>￥{{pprice}}</span></h5>
+                            <div class="quantity_box" style="height:10px;">
+                                <label for="quantity">数量 :</label>
+                                <input type="text" placeholder="1" id="quantity" v-model="quantity">
+                            </div>
+                            <h5>
+                                尺寸 : <el-select v-model="value" placeholder="请选择">
+                                    <el-option v-for="item in options"
+                                               :key="item.sid"
+                                               :label="item.ssize"
+                                               :value="item.sid">
+                                    </el-option>
+                                </el-select>
+                            </h5>
+                            <button class="pink_more" v-on:click="AddCartInfo(value,quantity)" style="border:none;">加入购物车</button>
+                            
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <section class="similar_product_area p_100">
+            <div class="container">
+                <div class="main_title">
+                    <h2>相似蛋糕</h2>
+                </div>
+                <div class="row similar_product_inner">
+                    <div class="col-lg-3 col-md-4 col-6" v-for="(data,index) in SimilarCake" :key="index">
+                        <div class="cake_feature_item">
+                            <a :href="GotoDetail(data.pid)">
+                                <div class="cake_img">
+                                    <img :src="Baseimg+data.pimg" alt="" width="220" height="200">
+                                </div>
+                            </a>
+                            <div class="cake_text">
+                                <h4>￥{{data.pprice}}</h4>
+                                <h3>{{data.pname}}</h3>
+                                <a class="pest_btn" >加入购物车</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+
+
+    <script>
+        var Main = {
+            data() {
+                return {
+                    pid:"",
+                    pname: "",
+                    pprice: "",
+                    pimg: "",
+                    Baseimg: "https://tcr-1308226713.cos.ap-guangzhou.myqcloud.com/Images/",
+                    SimilarCake:[],
+                    num: 1,
+                    classify: "",
+                    options: [{
+                        value: '',
+                        label: ''
+                    }],
+                    value:1,
+                    quantity:1,
+                }
+            },
+            created() {
+                
+                this.ShowProByid();
+                this.ShowSizeInfo();
+            },
+            methods: {
+                async ShowProByid() {
+                    //这里是获取a链接的值
+                    var category = window.location.search;
+                    //截取，获取获得category的具体值
+                    var cateval = category.substring(category.lastIndexOf('=') + 1, category.length);
+                    console.log(cateval);
+
+                    const { data: res } = await axios.post("/Cake/Details1", {id:cateval});
+                    console.log(res);
+                    this.pid = res[0].pid;
+                    this.pname = res[0].pname;
+                    this.pprice = res[0].pprice;
+                    this.pimg = res[0].pimg;
+                    this.classify = res[0].pclassify;
+                    console.log(this.classify);
+                    this.ShowSimilarCake(this.classify);
+                    this.ShowSizeInfo(this.classify);
+                },
+                async AddCartInfo(size, q) {
+                    const { data: ress } = await axios.get("/Cake/SelectUserInfo");
+                    console.log(ress);
+                    if (ress == "无") {
+                        this.$message.warning('您还未登录！请前往登录！！');
+                        return false;
+                    }
+
+                    const { data: res } = await axios.post("/Cake/SelectCart", { pid: this.pid });
+                    console.log(res);
+                     if (res == "有") {
+                        this.$message.warning('购物车已有商品！');
+                        return false;
+                    }  else {
+                        const { data: res } = await axios.post("/Cake/AddCart", { pid: this.pid, size: size, q: q });
+                        if (res.status == "200") {
+                            this.$message.success('添加成功');
+                        }
+                    }
+                },
+                async ShowSizeInfo(val) {                   
+                        const { data: res } = await axios.get("/Cake/GetCakeSize");
+                        console.log(res);
+                        this.options = res;                    
+
+                },
+                async ShowSimilarCake(val) {
+                    const { data: res } = await axios.post("/Cake/SimilarCake", { cid : val });
+                    console.log(res);
+                    this.SimilarCake = res;
+                },
+                GotoDetail: function (val) {
+                    //链接定向
+                    return '/Cake/Details?id=' + val;
+                },
+                GotoCart(pid, size, quantity) {
+                    //链接定向
+                    return '/Cake/Cart?id=' + pid + '&sid=' + size + '&q=' + quantity;
+                },
+                handleChange(value) {
+                    console.log(value);
+                }
+            }
+        }
+
+        var Ctor = Vue.extend(Main)
+        new Ctor().$mount('#appps')
+    </script>
+</body>
+</html>

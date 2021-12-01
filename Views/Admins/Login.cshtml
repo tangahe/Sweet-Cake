@@ -1,0 +1,110 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_TopMenu.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+
+    <style>
+        #Box {
+            background: url('../../static/img/md-34.jpg') no-repeat;
+            background-size: 100% 100%;
+            height: 800px;
+            width: 100%;
+        }
+
+        #login-box {
+            float: right;
+            margin-right: 150px;
+            margin-top: 180px;
+            width: 500px;
+            background-color: #ffffff;
+            box-shadow: #dedcdc 10px 10px initial;
+            padding: 50px;
+        }
+
+        .login-form {
+            margin: 20px 0px;
+            font-weight: bold;
+        }
+
+            .login-form a {
+                color: black;
+            }
+
+        .login-way {
+            border-bottom: 3px solid black;
+            padding: 5px;
+        }
+
+        .login-email {
+            margin-left: 25px;
+        }
+
+        .login-account {
+        }
+
+        .form-email {
+            display: none;
+        }
+
+        .xixanshi {
+            display: block;
+        }
+
+        .yincang {
+            display: none;
+        }
+
+        .btn-login {
+            padding: 8px 25px;
+        }
+    </style>
+</head>
+<body>
+
+
+
+    <section>
+        <div id="Box">
+
+            <div id="login-box">
+                <h2 style="font-weight:bold;">登录</h2>
+                <div class="login-form">
+                    <a class="login-way login-account">管理员登录</a>
+                    
+                </div>
+                @*账号登录*@
+                <form class="form-account" method="post" action="/admins/Login">
+                    <div class="form-group">
+                        <label class="text-muted">账号：</label>
+                        <input type="text" class="form-control account" id="exampleInputEmail1" aria-describedby="emailHelp" name="Uaccount">
+                        @*<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>*@
+                    </div>
+                    <div class="form-group">
+                        <label class="text-muted">密码：</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1" name="pwd">
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label text-muted">记住密码</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-login login-account">登录</button>
+                </form>
+
+                
+                <div style="float:right">
+                    <a href="/Cake/Register">没有账户？注册一个吧！</a>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    
+</body>
+</html>

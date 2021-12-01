@@ -1,0 +1,187 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_TopMenu.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Products</title>
+
+    
+</head>
+<body>
+    <section class="banner_area" style="margin-top:130px;">
+        <div class="container">
+            <div class="banner_text">
+                <h3>Sweet Cake</h3>
+            </div>
+        </div>
+    </section>
+
+    <section class="product_area p_100" id="app">
+        <div class="container">
+            <div class="row product_inner_row">
+                <div class="col-lg-9">
+                    <div class="row product_item_inner">
+                        @* 商品展示 *@
+
+                        <div class="col-lg-4 col-md-4 col-6" v-for="(data,index) in allCakeInfo" :key="index">
+                            <div class="cake_feature_item">
+                                <a :href="GotoDetail(data.pid)">
+                                    <div class="cake_img">
+                                        <img :src="Baseimg+data.pimg" alt="" width="220" height="200">
+                                    </div>
+                                </a>
+                                <div class="cake_text">
+                                    <h4>￥{{data.pprice}}</h4>
+                                    <h3>{{data.pname}}</h3>
+                                 
+                                    <a class="pest_btn" style="color:white"  v-on:click="AddCartInfo1(data.pid)">加入购物车</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    @* 分页 *@
+                    <div class="product_pagination">
+                        <div class="left_btn">
+                            <a href="javascript:;" v-on:click="prev()"><i class="lnr lnr-arrow-left"></i> 上一页</a>
+                        </div>
+                        <div class="middle_list">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#" v-on:click="next()">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">8</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="right_btn"><a href="javascript:;" v-on:click="next()">下一页 <i class="lnr lnr-arrow-right"></i></a></div>
+
+                    </div>
+                </div>
+
+                <div class="col-lg-3">
+                    <div class="product_left_sidebar">
+                        @* 查询 *@
+                        <aside class="left_sidebar search_widget">
+                            <div class="input-group">
+                                <form action="/Cake/Searches" method="post">
+                                    <input type="search" v-model="p" class="form-control" placeholder="请输入想要的蛋糕...">
+                                    <div class="input-group-append">
+                                        <span>|</span>
+                                        <button class="btn" type="button" v-on:click="Search()">查询</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </aside>
+                        @* 蛋糕分类 *@
+                        <aside class="left_sidebar p_catgories_widget">
+                            <div class="p_w_title">
+                                <h3>蛋糕分类</h3>
+                            </div>
+                            <ul class="list_style">
+                                <li><a href="#" v-on:click="GetCakeByl('5')">纸杯蛋糕</a></li>
+                                <li><a href="#" v-on:click="GetCakeByl('1')">慕斯蛋糕</a></li>
+                                <li><a href="#" v-on:click="GetCakeByl('2')">巧克力蛋糕</a></li>
+                                <li><a href="#" v-on:click="GetCakeByl('3')">坚果蛋糕</a></li>
+                                <li><a href="#" v-on:click="GetCakeByl('4')">水果蛋糕</a></li>
+
+                            </ul>
+                        </aside>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--================End Product Area =================-->
+
+    <script>
+    var Main = {
+            data() {
+                return {
+                    allCakeInfo: [],
+                    Baseimg: "https://tcr-1308226713.cos.ap-guangzhou.myqcloud.com/Images/",
+                    p: '',
+                    value: 1,
+                    quantity: 1,
+                }
+            },
+            methods: {
+                async showAllCake() {
+                    const { data: res } = await axios.get("/Cake/GetProducts");
+                    this.allCakeInfo = res;
+                    console.log(this.allCakeInfo);
+
+                },
+                async next() {
+                    var num = this.allCakeInfo[0].pid;
+                    const { data: res } = await axios.post("/Cake/NextPage", { pnum: num - 12 });
+                    console.log(num + 12);
+                    this.allCakeInfo = res;
+                },
+                async prev() {
+                    var num = this.allCakeInfo[0].pid;
+                    const { data: res } = await axios.post("/Cake/PrevPage", { pnum: num + 12 });
+                    console.log(num - 12);
+                    this.allCakeInfo = res;
+                },
+                async Search() {
+                    const { data: res } = await axios.post("/Cake/Searches", { name: this.p });
+                    if (res == "无") {
+                        alert("暂无此商品！")
+                    } else {
+                        console.log(this.key);
+                        this.allCakeInfo = res;
+                    }
+                },
+                async GetCakeByl(val) {
+                    const { data: res } = await axios.post("/Cake/GetClassify", { classify: val });
+                    console.log(val);
+                    this.allCakeInfo = res;
+                },
+                //添加购物车
+                async AddCartInfo1(val) {
+                    console.log(val);
+                    const { data: ress } = await axios.get("/Cake/SelectUserInfo");
+                    console.log(ress);
+                    if (ress == "无") {
+                        this.$message.warning('您还未登录！请前往登录！！');
+                        return false;
+                    }
+                    const { data: res } = await axios.post("/Cake/SelectCart", { pid: val });
+                    console.log(res);
+                    if (res == "有") {
+                        this.$message.warning('购物车已有商品！');
+                        return false;
+                    } else {
+                        const { data: res } = await axios.post("/Cake/AddCart1", { pid: val });
+                        if (res.status == "200") {
+                            this.$message.success('添加成功');
+                        }
+                    }
+                },
+                GotoDetail: function (val) {
+                    //链接定向
+                    return '/Cake/Details?id=' + val
+                },
+            },
+            created() {
+                this.showAllCake();
+
+            }
+        }
+
+    var Ctor = Vue.extend(Main)
+    new Ctor().$mount('#app')
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,314 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_TopMenu.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Cart</title>
+
+    <style>
+        #app {
+            width: 80%;
+            margin: 0px auto;
+        }
+    </style>
+
+</head>
+<body>
+    <section class="banner_area" style="margin-top:130px;">
+        <div class="container">
+            <div class="banner_text">
+                <h3>Sweet Cake</h3>
+            </div>
+        </div>
+    </section>
+    <div id="app">
+        <!--================Cart Table Area =================-->
+
+        <section class="cart_table_area p_100">
+            <div class="container">
+                <div class=" table-responsive" style="border:1px solid #f9f9f9;padding:20px;">
+                    <el-table ref="multipleTable"
+                              :data="tableData"
+                              tooltip-effect="dark"
+                              style="width:100%"
+                              v-on:selection-change="handleSelectionChange">
+                        <el-table-column type="selection"
+                                         width="55">
+                        </el-table-column>
+                        <el-table-column prop="pimg"
+                                         label="图片"
+                                         width="150">
+                            <template slot-scope="scope">
+                                <img :src="Baseimg+scope.row.pimg" width="100" height="100" />
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="pname"
+                                         label="名称"
+                                         width="120">
+                        </el-table-column>
+                        <el-table-column prop="pprice"
+                                         label="单价"
+                                         width="120">
+                            <template slot-scope="scope">
+                                <span>{{scope.row.pprice.toFixed(2)}}￥</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="尺寸"
+                                         width="120">
+                            <template slot-scope="scope">
+                                <el-select v-model="scope.row.size" placeholder="请选择">
+                                    <el-option v-for="s in options"
+                                               :label="s.ssize"
+                                               :value="s.sid">
+                                    </el-option>
+                                </el-select>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="quantity"
+                                         label="数量"
+                                         width="180">
+                            <template slot-scope="scope">
+                                <el-input readonly v-model.number="scope.row.quantity" autocomplete="off" style="width:140px" size="mini"
+                                          v-on:change="handleInput(scope.row)">
+                                    <el-button size="mini" slot="prepend" v-on:click="del(scope.row)"><i class="el-icon-minus"></i></el-button>
+                                    <el-button slot="append" size="mini" v-on:click="add(scope.row)"><i class="el-icon-plus"></i></el-button>
+                                </el-input>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column label="小计"
+                                         width="180">
+                            <template slot-scope="scope">
+                                <span v-if="scope.row.quantity==1">{{scope.row.pprice.toFixed(2)}}￥</span>
+                                <span v-else>{{scope.row.goodTotal}}￥</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作"
+                                         width="120">
+                            <template slot-scope="scope">
+                                <el-button size="mini"
+                                           type="danger"
+                                           v-on:click="tableData(scope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+
+                <div class="row cart_total_inner" style="margin-top:30px;">
+                    <div class="col-lg-7">
+                        <template>
+                            送达时间：
+                            <el-time-picker v-model="value1"
+                                            :picker-options="{selectableRange: '08:30:00 - 20:30:00'}"
+                                            placeholder="两小时后才可配送哦！">
+                        </template>
+                        <br /><hr />
+
+                        <template>
+                            <a  style="color:#f195b2;margin-bottom:10px;" href="/Cake/Personal">前往个人中心添加地址</a>
+                            <br />
+                            <el-radio-group v-model="radio" v-for="(item,i) in AddressInfo" :key="i" v-on:change="changes(item)">
+                                <el-radio style="margin-left:30px; height:30px; line-height:30px;" :label="item.aid">地址：{{item.addressName}}；电话：{{item.phone}}</el-radio>
+                                <br />
+                            </el-radio-group>
+                        </template>
+                        
+
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="cart_total_text">
+                            <div class="cart_head">
+                                购买金额
+                            </div>
+                            <div class="sub_total">
+                                <h5>总价： <span>￥{{price.toFixed(2)}}</span></h5>
+                            </div>
+
+                            <div class="cart_footer">
+                                <a class="pest_btn" v-on:click="OnBalance" href="javascript:;">结算</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--================End Cart Table Area =================-->
+
+    </div>
+    <script>
+
+        function formatTimeMills(timeMills) {
+            var date = new Date(timeMills);
+            var timeStr = date.getFullYear() + "-";
+            if (date.getMonth() < 9) { // 月份从0开始的
+                timeStr += '0';
+            }
+            timeStr += date.getMonth() + 1 + "-";
+            timeStr += date.getDate() < 10 ? ('0' + date.getDate()) : date.getDate();
+            timeStr += ' ';
+            timeStr += date.getHours() < 10 ? ('0' + date.getHours()) : date.getHours();
+            timeStr += ':';
+            timeStr += date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes();
+            timeStr += ':';
+            timeStr += date.getSeconds() < 10 ? ('0' + date.getSeconds()) : date.getSeconds();
+            return timeStr;
+        }
+    var Main = {
+            data() {
+                return {
+                    tableData: [],
+                    multipleSelection: [],
+                    Baseimg: "https://tcr-1308226713.cos.ap-guangzhou.myqcloud.com/Images/",
+                    options: [],
+                    //尺寸
+                    price: 0.00,
+                    AddressInfo: [],
+                    value1: [new Date(2016, 9, 10, 8, 40), new Date(2016, 9, 10, 9, 40)],
+                    radio: 3,
+                    form: [],
+                    addressList:null,
+                }
+            },
+            created() {
+                this.ShowAllCart();
+                this.ShowSizeInfo();
+                this.GetAddress();
+
+            },
+            methods: {
+                changes(item) {
+                    console.log(item)
+                    this.addressList = item;
+                    console.log(this.addressList)
+
+                },
+                //结算
+                async OnBalance() {
+                    if (this.addressList.address == "") {
+                        this.$message.error("请选择收货地址");
+                        return false;
+                    }
+                    console.log(this.addressList)
+                    var time = formatTimeMills(this.value1);
+                    for (var i = 0; i < this.multipleSelection.length; i++) {
+                        const { data: res } = await axios.post("/Cake/OnBalance", {
+                            uid: this.multipleSelection[i].uid,
+                            pid: this.multipleSelection[i].pid,
+                            cid: this.multipleSelection[i].cid,
+                            quantity: this.multipleSelection[i].quantity,
+                            o_size: this.multipleSelection[i].size,
+                            o_servicetime: time,
+                            oaddress: this.addressList.addressName,
+                        });
+                        if (res != "200") {
+                            this.$message.error("商品" + this.multipleSelection[i].pname + "提交失败");
+                            return false;
+                        }                        
+                        //console.log(this.multipleSelection[i]);
+                    }
+                    this.$message.success("订单提交成功");
+                    this.ShowAllCart();
+                },
+                async GetAddress() {
+                    //AddressInfo
+                    const { data: res } = await axios.get("/Cake/GetAddressInfo");
+                    this.AddressInfo = res;;
+                },
+                async add(addGood) {
+                    if (typeof addGood.quantity == "string") {
+                        addGood.quantity = parseInt(addGood.quantity);
+                    }
+                    addGood.quantity += 1;
+                    addGood.goodTotal = (addGood.quantity * addGood.pprice).toFixed(2); //保留两位小数
+                    this.handleSelectionChange(this.multipleSelection);
+
+                },
+                del(delGood) {
+                    if (typeof delGood.quantity == "string") {
+                        delGood.quantity = parseInt(delGood.quantity);
+                    }
+                    if (delGood.quantity > 1) {
+                        delGood.quantity -= 1;
+                        delGood.goodTotal = (delGood.quantity * delGood.pprice).toFixed(2); //保留两位小数
+                        this.handleSelectionChange(this.multipleSelection);
+                    }
+                },
+                handleInput() {
+                    if (null == value.quantity || value.quantity == "" || value.quantity == 0) {
+                        value.quantity = 1;
+                    }
+                    value.goodTotal = (value.quantity * value.pprice).toFixed(2); //保留两位小数
+                    //增加商品数量也需要重新计算商品总价
+                    this.handleSelectionChange(this.multipleSelection);
+                },
+                async handleDelete(val) {
+                    var id = val.cid;
+                    console.log(id);
+                    const { data: res } = await axios.post("/Cake/DeleteCart", { cid: id });
+                    console.log(res.status);
+                    if (res.status == "200") {
+                        this.ShowAllCart();
+                        this.$message.success('删除成功！');
+                    }
+
+                },
+                handleSelectionChange(selection) {
+
+                    this.multipleSelection = selection;
+                    this.totalPrice = 0;
+                    this.price = 0;
+                    //this.selectCount = 0;
+                    for (var i = 0; i < selection.length; i++) {
+                        if (typeof selection[i].goodTotal == "string") {
+                            selection[i].goodTotal = parseFloat(selection[i].goodTotal).toFixed(2);
+                        }
+                        //this.totalPrice += selection[i].goodTotal;
+                        this.price += (parseFloat(selection[i].quantity * selection[i].pprice));
+                        //this.selectCount += parseInt(selection[i].productNum);
+                    }
+
+                },
+
+                async ShowSizeInfo(val) {
+                    const { data: res } = await axios.get("/Cake/GetCakeSize");
+                    this.options = res;
+
+                },
+                async ShowAllCart() {
+                    const { data: res } = await axios.get("/Cake/Cart1");
+                    this.tableData = res;
+                    //console.log(res);
+                    //this.tableData = res;
+                },
+                async AddCartInfo() {
+                    //接受传来的值，添加
+                    //这里是获取a链接的值
+                    var category = window.location.search;
+                    //截取，获取获得category的具体值
+                    var cateval = category.substring(category.lastIndexOf('=') + 1, category.length);
+
+                },
+                toggleSelection(rows) {
+                    if (rows) {
+                        rows.forEach(row => {
+                            this.$refs.multipleTable.toggleRowSelection(row);
+                        });
+                    } else {
+                        this.$refs.multipleTable.clearSelection();
+                    }
+                },
+            }
+        }
+
+        var Ctor = Vue.extend(Main)
+        new Ctor().$mount('#app')
+
+    </script>
+
+</body>
+</html>

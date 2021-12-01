@@ -1,0 +1,503 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_TopMenu.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Persoual</title>
+
+   
+    <style>
+        #app{
+            width:80%;
+            margin:0px auto;
+            margin-top:50px;
+        }
+        .el-row {
+            margin-bottom: 20px;
+            &:last-child{
+            margin-bottom: 0;
+        } }
+
+        .el-col {
+            border-radius: 4px;
+        }
+        /*背景颜色*/
+        .bg-purple {
+            background: #f6f6f6;
+            border-radius: 4px;
+        }       
+        .grid-content {
+            border-radius: 4px;
+            min-height: 36px;
+        }
+
+        .row-bg {
+            padding: 10px 0;
+            background-color: #f9fafc;
+        }
+        .useimg{
+            height:100px;
+            width:100px;
+            border-radius:5px;
+        }
+        .widget-title{
+            padding:20px;
+        }
+        .clearfix li {
+            display: block;
+            height: 50px;
+            line-height: 50px;
+        }
+        .clearfix li a {
+            font-weight:bold;
+            font-size:20px;
+            color:#808080;
+
+        }
+        .clearfix li a:hover{
+            color:#f195b2;
+        }
+
+    </style>
+
+</head>
+<body>
+    <section class="banner_area" style="margin-top:80px;margin-bottom:150px;">
+        <div class="container">
+            <div class="banner_text">
+                <h3>个人中心</h3>
+            </div>
+        </div>
+    </section>
+    <div id="app">
+        <el-row :gutter="20" style="height:800px;">
+            <el-col :span="6">
+                <div class="grid-content bg-purple" style="height:700px;">
+                    @* 信息列表 *@
+                    <div class="sidebar-widget categories-widget">
+                        <div class="widget-title">
+                            <h3 style="letter-spacing:2px;">个人设置</h3>
+                        </div>
+                        <div class="widget-content info-ulist">
+                            <ul class="categories-list clearfix">
+                                <li><a href="#" v-on:click.prevent="handleTab(1)">账户信息</a></li>
+                                <li><a href="#" v-on:click.prevent="handleTab(2)">我的订单</a></li>
+                                <li><a href="#" v-on:click.prevent="handleTab(3)">我的地址</a></li>
+                                <li><a href="/Cake/Cart">购物车</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </el-col>
+            <el-col :span="18">
+                <div class="grid-content bg-purple" style="height:700px;padding:30px;">
+                    <div v-show="ShowFlag===1">
+                        <h4>账户信息</h4>
+                        @*头像*@
+                        <div style="margin-bottom:40px;">
+                            <form action="/" method="post" id="changeImg" enctype="multipart/form-data">
+                                <img :src="imageUrl" alt="" class="useimg" style="" />
+                                <input type="file" name="file" id="imgchang" style="opacity:0" />
+                            </form>
+                        </div>
+
+                        @*个人信息*@
+                        <el-form ref="form" :model="form" label-width="80px">
+                            <el-form-item label="用户昵称">
+                                <el-input v-model="form.name" style="width: 280px;"></el-input>
+                            </el-form-item>
+                            <el-form-item label="密码">
+                                <el-input v-model="form.pwd" style="width: 280px;"></el-input>
+                            </el-form-item>
+                            <el-form-item label="邮箱">
+                                <el-input v-model="form.email" style="width: 280px;"></el-input>
+                                <el-link icon="el-icon-edit" v-on:click="Editemail()">编辑</el-link>
+                            </el-form-item>
+                            @*这里是修改邮箱*@
+                            <el-dialog title="修改邮箱" :visible.sync="dialogEmailVisible">
+                                <div v-loading.lock="EmaidLoading">
+                                    <div class="form-group">
+                                        <label>*请输入新邮箱：</label>
+                                        <el-input placeholder="请输入新邮箱"
+                                                  prefix-icon="el-icon-message"
+                                                  v-model="editEmail.Newemail">
+                                        </el-input>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>*请输入当前邮箱：</label>
+                                        <el-input placeholder="请输入当前邮箱"
+                                                  prefix-icon="el-icon-message"
+                                                  :disabled="true"
+                                                  v-model="form.email">
+                                        </el-input>
+                                        <el-link type="primary" class="editcode" v-on:click="EditemilSendCode()">发送邮箱验证码</el-link>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>*请输入邮箱验证码：</label>
+                                        <el-input placeholder="输入邮箱验证码"
+                                                  prefix-icon="el-icon-chat-dot-round"
+                                                  v-model="editEmail.emailcode">
+                                        </el-input>
+                                    </div>
+                                    <div class="form-group">
+                                        <el-button type="primary" v-on:click="editEmailsubmit()">提交</el-button>
+                                    </div>
+                                </div>
+                            </el-dialog>
+                            @*这里是修改邮箱*@
+                            <el-form-item label="电话号码">
+                                <el-input v-model="form.phone" style="width: 280px;"></el-input>
+                            </el-form-item>
+
+                            <el-form-item>
+                                <el-button type="primary" v-on:click="onSubmit">修改</el-button>
+                                <el-button>取消</el-button>
+                            </el-form-item>
+                        </el-form>
+
+                    </div>
+                    <div v-show="ShowFlag===2">
+                        <h4>我的订单</h4>
+                        <el-table ref="multipleTable"
+                                  :data="tableData1"
+                                  height="620"
+                                  tooltip-effect="dark"
+                                  style="width:100%">
+
+                            <el-table-column prop="pimg"
+                                             label="图片"
+                                             width="150">
+                                <template slot-scope="scope">
+                                    <img :src="Baseimg1+scope.row.pimg" width="100" height="100" />
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="pname"
+                                             label="名称"
+                                             width="120">
+                            </el-table-column>
+                            <el-table-column prop="pprice"
+                                             label="单价"
+                                             width="80">
+                                <template slot-scope="scope">
+                                    <span>{{scope.row.pprice.toFixed(2)}}￥</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="ssize"
+                                             label="尺寸"
+                                             width="80">
+
+                            </el-table-column>
+                            <el-table-column prop="quantity"
+                                             label="数量"
+                                             width="80">
+
+                            </el-table-column>
+                            <el-table-column prop="oaddress"
+                                             label="地址"
+                                             width="120">
+                            </el-table-column>
+                            <el-table-column prop="o_picktime"
+                                             label="下单时间"
+                                             width="200">
+                            </el-table-column>
+                            <el-table-column label="操作"
+                                             width="120">
+                                <template slot-scope="scope">
+                                    <el-button size="mini"
+                                               type="danger"
+                                               v-on:click="handleDelete(scope.row)">删除</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+
+                    </div>
+
+
+                    <div v-show="ShowFlag===3">
+                        <h4>我的地址</h4>
+                        <el-form ref="formAddress" :model="formAddress" label-width="80px" style="margin-top:30px;">
+                            <el-form-item label="下单人">
+                                <el-input v-model="formAddress.name" placeholder="收件人姓名" prefix-icon="el-icon-user-solid" style="width:60%;"></el-input>
+                            </el-form-item>
+                            <el-form-item label="电话号码">
+                                <el-input v-model="formAddress.phone" placeholder="收件电话号码" prefix-icon="el-icon-phone" style="width:60%"></el-input>
+
+                            </el-form-item>
+                            <el-form-item label="详细地址">
+                                <el-input type="textarea" placeholder="输入详细地址（街道*门牌号等）" prefix-icon="el-icon-location-information" v-model="formAddress.datails" placeholder="请输入详细地址（门牌号*栋）" style="width:60%"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" style="width:150px;" v-on:click="AddressSubmit()">提交</el-button>
+
+
+                            </el-form-item>
+                        </el-form>
+
+                        <div>
+                            <el-table ref="multipleTable"
+                                      :data="tableData2"
+                                      height="300"
+                                      tooltip-effect="dark"
+                                      style="width:100%">
+
+                                <el-table-column prop="uaccount"
+                                                 label="收件人"
+                                                 width="180">
+                                </el-table-column>
+
+                                <el-table-column prop="phone"
+                                                 label="电话号码"
+                                                 width="220">
+                                </el-table-column>
+                                <el-table-column prop="addressName"
+                                                 label="地址"
+                                                 width="280">
+                                </el-table-column>
+                                <el-table-column label="操作"
+                                                 width="120">
+                                    <template slot-scope="scope">
+                                        <el-button size="mini"
+                                                   type="danger"
+                                                   v-on:click="handleDelete1(scope.row)">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </el-col>
+        </el-row>
+    </div>
+
+    <script>
+        var Main = {
+            data() {
+                return {
+                    ShowFlag: 1,
+                    Baseimg: "https://tcr-1308226713.cos.ap-guangzhou.myqcloud.com/Picture/",
+                    Baseimg1: "https://tcr-1308226713.cos.ap-guangzhou.myqcloud.com/Images/",
+
+                    imageUrl: "",
+                    //个人信息
+                    form: {
+                        name: '',
+                        email: '',
+                        pwd: '',
+                        phone: '',
+                        address: '',
+                    },
+                    tableData1: [],
+                    tableData2: [],
+                    formAddress: {
+                        name: "",
+                        phone: "",
+                        datails: "",
+                    },
+                    dialogEmailVisible: false,
+                    EmaidLoading: false,
+                    editEmail: {
+                        Newemail: '',
+                        emailcode: '',
+                        newcode: '',
+                    },
+
+                }
+            },
+            created() {
+                this.GetUsersInfo();
+                this.GetOrderInfo();
+                this.GetAddressInfo();
+
+            },
+            methods: {
+                async GetUsersInfo() {
+                    const { data: res } = await axios.get("/Cake/GetUsersInfo");
+                    console.log(res);
+                    this.imageUrl = this.Baseimg + res[0].uimage;
+                    this.form.name = res[0].uaccount;
+                    this.form.pwd = res[0].upwd;
+                    this.form.phone = res[0].uphone;
+                    this.form.email = res[0].uemail;
+
+                },
+                //地址删除
+                async handleDelete1(val) {
+                    console.log(val.aid);
+                    const { data: res } = await axios.post("/Cake/Deleteaddress", { id: val.aid })
+                    console.log(res.status);
+                    if (res.status == "200") {
+                        this.GetAddressInfo();
+                        this.$message.success('删除成功！');
+                    }
+                   
+                },
+                async GetOrderInfo() {
+                    const { data: res } = await axios.get("/Cake/GetOrderInfo");
+                    this.tableData1 = res;
+                    console.log(this.tableData1);
+                },
+                async GetAddressInfo() {
+                    const { data: res } = await axios.get("/Cake/GetAddressInfo");
+                    this.tableData2 = res;
+                    console.log(this.tableData2);
+                },
+                async handleDelete(val) {
+                    console.log(val.oid);
+                    const { data: res } = await axios.post("/Cake/Deleteorders", { id: val.oid })
+                    console.log(res.status);
+                    if (res.status == "200") {
+                        this.$message.success('删除成功！');
+                    }
+                    this.GetOrderInfo();
+                },
+                handleTab(val) {
+                    this.ShowFlag = val;
+                },
+                //编辑邮箱
+                Editemail() {
+                    this.dialogEmailVisible = true;
+                },
+                //获取邮箱验证码
+                async EditemilSendCode() {
+                    if (this.editEmail.Newemail == "") {
+                        this.$message({
+                            message: '新邮箱不能为空！',
+                            type: 'warning'
+                        });
+                        return false;
+                    }
+
+                    var email = this.editEmail.Newemail;
+                    console.log(email)
+                    const { data: res } = await axios.post("/Cake/Login_Emali", { uemail: email });
+                    console.log(res);
+                    this.editEmailsubmit(res);
+                },
+                //邮箱修改提交
+                async editEmailsubmit(val) {
+                    if (this.Editemail.emailcode == val) {
+                        const { data: res } = await axios.post("/Cake/EideEmail", { email: this.editEmail.Newemail });
+                        console.log(res)
+                        if (res == "成功") {
+                            this.GetUsersInfo();
+                            this.$message({
+                                message: '修改成功！！',
+                                type: 'success'
+                            });
+                        }
+                    }
+                },
+                //个人信息提交
+                async onSubmit() {
+                    const { data: res } = await axios.post("/Cake/EditUsers", { name: this.form.name, pwd: this.form.pwd, email: this.form.email, phone: this.form.phone })
+                    console.log(res);
+
+                    if (res == "成功") {
+                        this.GetUsersInfo();
+                        this.$message({
+                            message: '修改成功！！',
+                            type: 'success'
+                        });
+                    }
+                },
+                //地址新增
+                async AddressSubmit() {
+                    const { data: res } = await axios.post("/Cake/Addaddress", { name: this.formAddress.name, phone: this.formAddress.phone, datail: this.formAddress.datails })
+                    console.log(res);
+
+                    if (res.status == "200") {
+                        this.GetAddressInfo();
+
+                    }
+                }
+            },
+
+        }
+        var Ctor = Vue.extend(Main)
+        new Ctor().$mount('#app')
+    </script>
+    <script src="https://unpkg.com/cos-js-sdk-v5/dist/cos-js-sdk-v5.min.js"></script>
+    <script>
+        var url = "Picture";
+        function uploadImg(fileData, url) {
+            const Bucket = 'tcr-1308226713'; /* 存储桶 */
+            const Region = 'ap-guangzhou';
+            const cos = new COS({
+                SecretId: 'AKIDsZ0B7nCKbdOsACwRgfNp1xd191d06wWp',
+                SecretKey: '3pKYVGp78tOdbHgpiLhma7OP8amgJglZ',
+            });
+            const files = {}
+            files.Body = fileData
+            files.Bucket = Bucket
+            // files.Bucket = Bucket
+            files.Key = url + '/' + fileData.name
+            files.Region = Region;
+            let arrList = [];
+            arrList.push(files);
+
+            cos.uploadFiles({
+                files: arrList,
+                SliceSize: 1024 * 1024 * 10,
+                /* 设置大于10MB采用分块上传 */
+                onProgress: function (info) {
+                    var percent = parseInt(info.percent * 10000) / 100;
+                    var speed = parseInt(info.speed / 1024 / 1024 * 100) / 100;
+
+                },
+                onFileFinish: function (err, data, options) {
+
+                },
+            }, (err, data) => {
+                if (err) {
+                    console.log('上传失败', err);
+                    return;
+                }
+
+            });
+        }
+
+        $(function () {
+            $('.useimg').click(function () {
+                $('#imgchang').click()
+            })
+            $('#imgchang').change(async function (event) {
+                var files = event.target.files, file;
+                if (files && files.length > 0) {
+                    // 获取目前上传的文件
+                    file = files[0];
+                    // 来在控制台看看到底这个对象是什么
+                    console.log(file);
+                    // 下面是关键的关键，通过这个 file 对象生成一个可用的图像 URL
+                    // 获取 window 的 URL 工具
+
+                    const { data: res } = await axios.post("/Cake/ChangeImg", { img: file.name });
+                    if (res == "200") {
+                        uploadImg(file, url);
+                        var URL = window.URL || window.webkitURL;
+                        // 通过 file 生成目标 url
+                        var imgURL = URL.createObjectURL(file);
+                        $(".useimg").attr("src", imgURL);
+                        setTimeout(() => { mather.img = file.name; },500);
+                        
+                        
+                    } else {
+                        alert("失败");
+                    }
+                }
+            })
+        })
+    </script>
+
+</body>
+
+</html>

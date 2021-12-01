@@ -1,0 +1,164 @@
+﻿@{
+    Layout = "~/Views/Shared/_TopMenu.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Register</title>
+
+    <style>
+        #Box {
+            background: url('../../static/img/md-34.jpg') no-repeat;
+            background-size: 100% 100%;
+            height: 1200px;
+            width: 100%;
+        }
+
+        #login-box {
+            float: right;
+            margin-right: 150px;
+            margin-top: 200px;
+            width: 500px;
+            background-color: #ffffff;
+            box-shadow: #dedcdc 10px 10px initial;
+            padding: 50px;
+        }
+
+        .login-form {
+            margin: 20px 0px;
+            font-weight: bold;
+        }
+
+            .login-form a {
+                color: black;
+            }
+
+        .login-way {
+            border-bottom: 3px solid black;
+            padding: 5px;
+        }
+
+        .login-email {
+            margin-left: 25px;
+        }
+
+        .login-account {
+        }
+
+        .form-email {
+            display: none;
+        }
+
+        .xixanshi {
+            display: block;
+        }
+
+        .yincang {
+            display: none;
+        }
+
+        .btn-login {
+            padding: 8px 25px;
+        }
+    </style>
+</head>
+<body>
+    <div id="Box">
+        <div id="login-box">
+            <h2 style="font-weight:bold;">注册</h2>
+            @*账号登录*@
+            <form class="form-account" method="post" action="/Cake/Register">
+                
+                <div class="form-group">
+                    <label class="text-muted">账号：</label>
+                    <input type="text" class="form-control account" id="n" aria-describedby="emailHelp" name="Uaccount">
+                </div>
+                <div class="form-group">
+                    <label class="text-muted">密码：</label>
+                    <input type="password" class="form-control" id="pwd1" name="upwd">
+                </div>
+                <div class="form-group">
+                    <label class="text-muted">确认密码：</label>
+                    <input type="password" class="form-control" id="pwd2" name="upwd1">
+                </div>
+                <div class="form-group">
+                    <label class="text-muted">输入邮箱：</label>
+                    <input type="text" class="form-control" id="code" aria-describedby="emailHelp" name="uemail">
+                </div>
+                <div class="form-group">
+                    <label class="text-muted">验证码：</label>
+                    <input type="text" class="form-control" id="code1" name="email_text">
+                    <span class="transmit">获取验证码</span>
+                </div>
+
+
+                <input type="submit" class="btn btn-primary btn-login le" value="注册" />
+            </form>
+        </div>
+    </div>
+
+    
+    <script>
+        $(function () {
+            $("#code").blur(async function () {
+                var email = $('#code').val();
+                const { data: res } = await axios.post("/Cake/Register1", { uemail: email });
+                console.log(res);
+                if (res == "失败") {
+                    alert("邮箱已注册！");
+                }
+            });
+
+            $(".account").blur(async function () {
+                var acc = $(".account").val();
+                console.log(acc);
+                const { data: res } = await axios.post("/Cake/Login_Account", { account: acc });
+                if (res == "失败") {
+                    alert("账号已被注册！请换一个账号名称！")
+                    return false;
+                }
+            })
+
+            var code = "";
+            $('.transmit').click(async function () {
+                var email = $('#code').val();
+                console.log(email)
+                const { data: res } = await axios.post("/Cake/Login_Emali", { uemail: email });
+                console.log(res);
+                code = res;
+            });
+
+            $('.le').click(function () {
+                var vcode = $('#code1').val();
+                if ($('#code').val() == '') {
+                    alert("邮箱不能为空");
+                    return false;
+                }
+
+                if ($('#code1').val() == '') {
+                    alert("验证码不能为空");
+                    return false;
+                }
+                if (vcode != code) {
+                    alert("验证码错误");
+                    return false;
+                }
+            });
+
+            $("#pwd2").blur(function () {
+                var p = $("#pwd1").val().trim();
+                if ($("#pwd2").val().trim() != p) {
+                    alert("两次密码不一致！请重新输入！");
+                    return false;
+                }
+            });
+
+
+        })
+    </script>
+
+</body>
+</html>
