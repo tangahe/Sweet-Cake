@@ -1,0 +1,761 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="cakeModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="address">
+          <Key>
+            <PropertyRef Name="aid" />
+          </Key>
+          <Property Name="aid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="uid" Type="int" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="20" />
+          <Property Name="phone" Type="nvarchar" MaxLength="20" />
+          <Property Name="addressName" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Admin">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="adminName" Type="nchar" MaxLength="10" />
+          <Property Name="pwd" Type="nchar" MaxLength="10" />
+          <Property Name="phone" Type="nvarchar" MaxLength="11" />
+        </EntityType>
+        <EntityType Name="cart">
+          <Key>
+            <PropertyRef Name="cid" />
+          </Key>
+          <Property Name="cid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="uid" Type="int" />
+          <Property Name="pid" Type="int" />
+          <Property Name="quantity" Type="int" />
+          <Property Name="size" Type="int" />
+        </EntityType>
+        <EntityType Name="classify">
+          <Key>
+            <PropertyRef Name="cid" />
+          </Key>
+          <Property Name="cid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="cname" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="orders">
+          <Key>
+            <PropertyRef Name="oid" />
+          </Key>
+          <Property Name="oid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="uid" Type="int" />
+          <Property Name="pid" Type="int" />
+          <Property Name="oaddress" Type="nvarchar" MaxLength="50" />
+          <Property Name="ophone" Type="nvarchar" MaxLength="11" />
+          <Property Name="quantity" Type="int" />
+          <Property Name="o_size" Type="int" />
+          <Property Name="o_picktime" Type="datetime" />
+          <Property Name="o_servicetime" Type="datetime" />
+        </EntityType>
+        <EntityType Name="product">
+          <Key>
+            <PropertyRef Name="pid" />
+          </Key>
+          <Property Name="pid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="pname" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="pclassify" Type="int" />
+          <Property Name="pprice" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="pimg" Type="nvarchar" MaxLength="50" />
+          <Property Name="pdsc" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="size">
+          <Key>
+            <PropertyRef Name="sid" />
+          </Key>
+          <Property Name="sid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ssize" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="users">
+          <Key>
+            <PropertyRef Name="uid" />
+          </Key>
+          <Property Name="uid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="uaccount" Type="nvarchar" MaxLength="20" />
+          <Property Name="upwd" Type="nvarchar" MaxLength="20" />
+          <Property Name="uphone" Type="nvarchar" MaxLength="11" />
+          <Property Name="uemail" Type="nvarchar" MaxLength="20" />
+          <Property Name="uaddress" Type="nvarchar" MaxLength="50" />
+          <Property Name="ubuy" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="uimage" Type="nvarchar" MaxLength="20" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“cake.dbo.CartView”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="CartView">
+          <Key>
+            <PropertyRef Name="cid" />
+            <PropertyRef Name="pname" />
+          </Key>
+          <Property Name="cid" Type="int" Nullable="false" />
+          <Property Name="uid" Type="int" />
+          <Property Name="pid" Type="int" />
+          <Property Name="quantity" Type="int" />
+          <Property Name="size" Type="int" />
+          <Property Name="pname" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="pimg" Type="nvarchar" MaxLength="50" />
+          <Property Name="pprice" Type="decimal" Precision="10" Scale="2" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“cake.dbo.View_address”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_address">
+          <Key>
+            <PropertyRef Name="aid" />
+            <PropertyRef Name="uid" />
+          </Key>
+          <Property Name="aid" Type="int" Nullable="false" />
+          <Property Name="uid" Type="int" Nullable="false" />
+          <Property Name="uaccount" Type="nvarchar" MaxLength="20" />
+          <Property Name="addressName" Type="nvarchar" MaxLength="50" />
+          <Property Name="phone" Type="nvarchar" MaxLength="20" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“cake.dbo.View_hot”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_hot">
+          <Key>
+            <PropertyRef Name="oid" />
+            <PropertyRef Name="pid" />
+            <PropertyRef Name="pname" />
+          </Key>
+          <Property Name="oid" Type="int" Nullable="false" />
+          <Property Name="pid" Type="int" Nullable="false" />
+          <Property Name="quantity" Type="int" />
+          <Property Name="pname" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="pprice" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="pimg" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“cake.dbo.View_orders”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_orders">
+          <Key>
+            <PropertyRef Name="oid" />
+            <PropertyRef Name="pname" />
+          </Key>
+          <Property Name="oid" Type="int" Nullable="false" />
+          <Property Name="pid" Type="int" />
+          <Property Name="uid" Type="int" />
+          <Property Name="pimg" Type="nvarchar" MaxLength="50" />
+          <Property Name="pname" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="pprice" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="ssize" Type="nvarchar" MaxLength="10" />
+          <Property Name="quantity" Type="int" />
+          <Property Name="oaddress" Type="nvarchar" MaxLength="50" />
+          <Property Name="o_picktime" Type="datetime" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“cake.dbo.View_orderss”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_orderss">
+          <Key>
+            <PropertyRef Name="oid" />
+            <PropertyRef Name="pname" />
+          </Key>
+          <Property Name="uaccount" Type="nvarchar" MaxLength="20" />
+          <Property Name="oid" Type="int" Nullable="false" />
+          <Property Name="pid" Type="int" />
+          <Property Name="uid" Type="int" />
+          <Property Name="pimg" Type="nvarchar" MaxLength="50" />
+          <Property Name="pname" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="pprice" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="ssize" Type="nvarchar" MaxLength="10" />
+          <Property Name="quantity" Type="int" />
+          <Property Name="oaddress" Type="nvarchar" MaxLength="50" />
+          <Property Name="o_picktime" Type="datetime" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“cake.dbo.View_Pro”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_Pro">
+          <Key>
+            <PropertyRef Name="pid" />
+            <PropertyRef Name="pname" />
+            <PropertyRef Name="cid" />
+          </Key>
+          <Property Name="pid" Type="int" Nullable="false" />
+          <Property Name="pname" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="pclassify" Type="int" />
+          <Property Name="pprice" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="pimg" Type="nvarchar" MaxLength="50" />
+          <Property Name="pdsc" Type="nvarchar" MaxLength="100" />
+          <Property Name="cid" Type="int" Nullable="false" />
+          <Property Name="cname" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <Association Name="FK_cart_product">
+          <End Role="size" Type="Self.size" Multiplicity="0..1" />
+          <End Role="cart" Type="Self.cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="size">
+              <PropertyRef Name="sid" />
+            </Principal>
+            <Dependent Role="cart">
+              <PropertyRef Name="size" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_cart_users">
+          <End Role="users" Type="Self.users" Multiplicity="0..1" />
+          <End Role="cart" Type="Self.cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="uid" />
+            </Principal>
+            <Dependent Role="cart">
+              <PropertyRef Name="uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_product_classify">
+          <End Role="classify" Type="Self.classify" Multiplicity="0..1" />
+          <End Role="product" Type="Self.product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="classify">
+              <PropertyRef Name="cid" />
+            </Principal>
+            <Dependent Role="product">
+              <PropertyRef Name="pclassify" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="cakeModelStoreContainer">
+          <EntitySet Name="address" EntityType="Self.address" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Admin" EntityType="Self.Admin" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="cart" EntityType="Self.cart" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="classify" EntityType="Self.classify" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="orders" EntityType="Self.orders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="product" EntityType="Self.product" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="size" EntityType="Self.size" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CartView" EntityType="Self.CartView" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [CartView].[cid] AS [cid], 
+    [CartView].[uid] AS [uid], 
+    [CartView].[pid] AS [pid], 
+    [CartView].[quantity] AS [quantity], 
+    [CartView].[size] AS [size], 
+    [CartView].[pname] AS [pname], 
+    [CartView].[pimg] AS [pimg], 
+    [CartView].[pprice] AS [pprice]
+    FROM [dbo].[CartView] AS [CartView]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="View_address" EntityType="Self.View_address" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_address].[aid] AS [aid], 
+    [View_address].[uid] AS [uid], 
+    [View_address].[uaccount] AS [uaccount], 
+    [View_address].[addressName] AS [addressName], 
+    [View_address].[phone] AS [phone]
+    FROM [dbo].[View_address] AS [View_address]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="View_hot" EntityType="Self.View_hot" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_hot].[oid] AS [oid], 
+    [View_hot].[pid] AS [pid], 
+    [View_hot].[quantity] AS [quantity], 
+    [View_hot].[pname] AS [pname], 
+    [View_hot].[pprice] AS [pprice], 
+    [View_hot].[pimg] AS [pimg]
+    FROM [dbo].[View_hot] AS [View_hot]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="View_orders" EntityType="Self.View_orders" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_orders].[oid] AS [oid], 
+    [View_orders].[pid] AS [pid], 
+    [View_orders].[uid] AS [uid], 
+    [View_orders].[pimg] AS [pimg], 
+    [View_orders].[pname] AS [pname], 
+    [View_orders].[pprice] AS [pprice], 
+    [View_orders].[ssize] AS [ssize], 
+    [View_orders].[quantity] AS [quantity], 
+    [View_orders].[oaddress] AS [oaddress], 
+    [View_orders].[o_picktime] AS [o_picktime]
+    FROM [dbo].[View_orders] AS [View_orders]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="View_orderss" EntityType="Self.View_orderss" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_orderss].[uaccount] AS [uaccount], 
+    [View_orderss].[oid] AS [oid], 
+    [View_orderss].[pid] AS [pid], 
+    [View_orderss].[uid] AS [uid], 
+    [View_orderss].[pimg] AS [pimg], 
+    [View_orderss].[pname] AS [pname], 
+    [View_orderss].[pprice] AS [pprice], 
+    [View_orderss].[ssize] AS [ssize], 
+    [View_orderss].[quantity] AS [quantity], 
+    [View_orderss].[oaddress] AS [oaddress], 
+    [View_orderss].[o_picktime] AS [o_picktime]
+    FROM [dbo].[View_orderss] AS [View_orderss]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="View_Pro" EntityType="Self.View_Pro" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_Pro].[pid] AS [pid], 
+    [View_Pro].[pname] AS [pname], 
+    [View_Pro].[pclassify] AS [pclassify], 
+    [View_Pro].[pprice] AS [pprice], 
+    [View_Pro].[pimg] AS [pimg], 
+    [View_Pro].[pdsc] AS [pdsc], 
+    [View_Pro].[cid] AS [cid], 
+    [View_Pro].[cname] AS [cname]
+    FROM [dbo].[View_Pro] AS [View_Pro]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_cart_product" Association="Self.FK_cart_product">
+            <End Role="size" EntitySet="size" />
+            <End Role="cart" EntitySet="cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK_cart_users" Association="Self.FK_cart_users">
+            <End Role="users" EntitySet="users" />
+            <End Role="cart" EntitySet="cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK_product_classify" Association="Self.FK_product_classify">
+            <End Role="classify" EntitySet="classify" />
+            <End Role="product" EntitySet="product" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="cakeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="address">
+          <Key>
+            <PropertyRef Name="aid" />
+          </Key>
+          <Property Name="aid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="uid" Type="Int32" Nullable="false" />
+          <Property Name="name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="phone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="addressName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Admin">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" />
+          <Property Name="adminName" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="pwd" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="phone" Type="String" MaxLength="11" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="cart">
+          <Key>
+            <PropertyRef Name="cid" />
+          </Key>
+          <Property Name="cid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="uid" Type="Int32" />
+          <Property Name="pid" Type="Int32" />
+          <Property Name="quantity" Type="Int32" />
+          <Property Name="size" Type="Int32" />
+          <NavigationProperty Name="size1" Relationship="Self.FK_cart_product" FromRole="cart" ToRole="size" />
+          <NavigationProperty Name="users" Relationship="Self.FK_cart_users" FromRole="cart" ToRole="users" />
+        </EntityType>
+        <EntityType Name="classify">
+          <Key>
+            <PropertyRef Name="cid" />
+          </Key>
+          <Property Name="cid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="cname" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="product" Relationship="Self.FK_product_classify" FromRole="classify" ToRole="product" />
+        </EntityType>
+        <EntityType Name="orders">
+          <Key>
+            <PropertyRef Name="oid" />
+          </Key>
+          <Property Name="oid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="uid" Type="Int32" />
+          <Property Name="pid" Type="Int32" />
+          <Property Name="oaddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ophone" Type="String" MaxLength="11" FixedLength="false" Unicode="true" />
+          <Property Name="quantity" Type="Int32" />
+          <Property Name="o_size" Type="Int32" />
+          <Property Name="o_picktime" Type="DateTime" Precision="3" />
+          <Property Name="o_servicetime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="product">
+          <Key>
+            <PropertyRef Name="pid" />
+          </Key>
+          <Property Name="pid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="pname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="pclassify" Type="Int32" />
+          <Property Name="pprice" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="pimg" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="pdsc" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="classify" Relationship="Self.FK_product_classify" FromRole="product" ToRole="classify" />
+        </EntityType>
+        <EntityType Name="size">
+          <Key>
+            <PropertyRef Name="sid" />
+          </Key>
+          <Property Name="sid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ssize" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="cart" Relationship="Self.FK_cart_product" FromRole="size" ToRole="cart" />
+        </EntityType>
+        <EntityType Name="users">
+          <Key>
+            <PropertyRef Name="uid" />
+          </Key>
+          <Property Name="uid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="uaccount" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="upwd" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="uphone" Type="String" MaxLength="11" FixedLength="false" Unicode="true" />
+          <Property Name="uemail" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="uaddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ubuy" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="uimage" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="cart" Relationship="Self.FK_cart_users" FromRole="users" ToRole="cart" />
+        </EntityType>
+        <EntityType Name="CartView">
+          <Key>
+            <PropertyRef Name="cid" />
+            <PropertyRef Name="pname" />
+          </Key>
+          <Property Name="cid" Type="Int32" Nullable="false" />
+          <Property Name="uid" Type="Int32" />
+          <Property Name="pid" Type="Int32" />
+          <Property Name="quantity" Type="Int32" />
+          <Property Name="size" Type="Int32" />
+          <Property Name="pname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="pimg" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="pprice" Type="Decimal" Precision="10" Scale="2" />
+        </EntityType>
+        <EntityType Name="View_address">
+          <Key>
+            <PropertyRef Name="aid" />
+            <PropertyRef Name="uid" />
+          </Key>
+          <Property Name="aid" Type="Int32" Nullable="false" />
+          <Property Name="uid" Type="Int32" Nullable="false" />
+          <Property Name="uaccount" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="addressName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="phone" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="View_hot">
+          <Key>
+            <PropertyRef Name="oid" />
+            <PropertyRef Name="pid" />
+            <PropertyRef Name="pname" />
+          </Key>
+          <Property Name="oid" Type="Int32" Nullable="false" />
+          <Property Name="pid" Type="Int32" Nullable="false" />
+          <Property Name="quantity" Type="Int32" />
+          <Property Name="pname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="pprice" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="pimg" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="View_orders">
+          <Key>
+            <PropertyRef Name="oid" />
+            <PropertyRef Name="pname" />
+          </Key>
+          <Property Name="oid" Type="Int32" Nullable="false" />
+          <Property Name="pid" Type="Int32" />
+          <Property Name="uid" Type="Int32" />
+          <Property Name="pimg" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="pname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="pprice" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="ssize" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="quantity" Type="Int32" />
+          <Property Name="oaddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="o_picktime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="View_orderss">
+          <Key>
+            <PropertyRef Name="oid" />
+            <PropertyRef Name="pname" />
+          </Key>
+          <Property Name="uaccount" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="oid" Type="Int32" Nullable="false" />
+          <Property Name="pid" Type="Int32" />
+          <Property Name="uid" Type="Int32" />
+          <Property Name="pimg" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="pname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="pprice" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="ssize" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="quantity" Type="Int32" />
+          <Property Name="oaddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="o_picktime" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="View_Pro">
+          <Key>
+            <PropertyRef Name="pid" />
+            <PropertyRef Name="pname" />
+            <PropertyRef Name="cid" />
+          </Key>
+          <Property Name="pid" Type="Int32" Nullable="false" />
+          <Property Name="pname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="pclassify" Type="Int32" />
+          <Property Name="pprice" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="pimg" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="pdsc" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="cid" Type="Int32" Nullable="false" />
+          <Property Name="cname" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK_cart_product">
+          <End Role="size" Type="Self.size" Multiplicity="0..1" />
+          <End Role="cart" Type="Self.cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="size">
+              <PropertyRef Name="sid" />
+            </Principal>
+            <Dependent Role="cart">
+              <PropertyRef Name="size" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_cart_users">
+          <End Role="users" Type="Self.users" Multiplicity="0..1" />
+          <End Role="cart" Type="Self.cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="uid" />
+            </Principal>
+            <Dependent Role="cart">
+              <PropertyRef Name="uid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_product_classify">
+          <End Role="classify" Type="Self.classify" Multiplicity="0..1" />
+          <End Role="product" Type="Self.product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="classify">
+              <PropertyRef Name="cid" />
+            </Principal>
+            <Dependent Role="product">
+              <PropertyRef Name="pclassify" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="cakeEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="address" EntityType="Self.address" />
+          <EntitySet Name="Admin" EntityType="Self.Admin" />
+          <EntitySet Name="cart" EntityType="Self.cart" />
+          <EntitySet Name="classify" EntityType="Self.classify" />
+          <EntitySet Name="orders" EntityType="Self.orders" />
+          <EntitySet Name="product" EntityType="Self.product" />
+          <EntitySet Name="size" EntityType="Self.size" />
+          <EntitySet Name="users" EntityType="Self.users" />
+          <EntitySet Name="CartView" EntityType="Self.CartView" />
+          <EntitySet Name="View_address" EntityType="Self.View_address" />
+          <EntitySet Name="View_hot" EntityType="Self.View_hot" />
+          <EntitySet Name="View_orders" EntityType="Self.View_orders" />
+          <EntitySet Name="View_orderss" EntityType="Self.View_orderss" />
+          <EntitySet Name="View_Pro" EntityType="Self.View_Pro" />
+          <AssociationSet Name="FK_cart_product" Association="Self.FK_cart_product">
+            <End Role="size" EntitySet="size" />
+            <End Role="cart" EntitySet="cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK_cart_users" Association="Self.FK_cart_users">
+            <End Role="users" EntitySet="users" />
+            <End Role="cart" EntitySet="cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK_product_classify" Association="Self.FK_product_classify">
+            <End Role="classify" EntitySet="classify" />
+            <End Role="product" EntitySet="product" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="cakeModelStoreContainer" CdmEntityContainer="cakeEntities">
+          <EntitySetMapping Name="address">
+            <EntityTypeMapping TypeName="cakeModel.address">
+              <MappingFragment StoreEntitySet="address">
+                <ScalarProperty Name="aid" ColumnName="aid" />
+                <ScalarProperty Name="uid" ColumnName="uid" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="phone" ColumnName="phone" />
+                <ScalarProperty Name="addressName" ColumnName="addressName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Admin">
+            <EntityTypeMapping TypeName="cakeModel.Admin">
+              <MappingFragment StoreEntitySet="Admin">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="adminName" ColumnName="adminName" />
+                <ScalarProperty Name="pwd" ColumnName="pwd" />
+                <ScalarProperty Name="phone" ColumnName="phone" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="cart">
+            <EntityTypeMapping TypeName="cakeModel.cart">
+              <MappingFragment StoreEntitySet="cart">
+                <ScalarProperty Name="cid" ColumnName="cid" />
+                <ScalarProperty Name="uid" ColumnName="uid" />
+                <ScalarProperty Name="pid" ColumnName="pid" />
+                <ScalarProperty Name="quantity" ColumnName="quantity" />
+                <ScalarProperty Name="size" ColumnName="size" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="classify">
+            <EntityTypeMapping TypeName="cakeModel.classify">
+              <MappingFragment StoreEntitySet="classify">
+                <ScalarProperty Name="cid" ColumnName="cid" />
+                <ScalarProperty Name="cname" ColumnName="cname" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="orders">
+            <EntityTypeMapping TypeName="cakeModel.orders">
+              <MappingFragment StoreEntitySet="orders">
+                <ScalarProperty Name="oid" ColumnName="oid" />
+                <ScalarProperty Name="uid" ColumnName="uid" />
+                <ScalarProperty Name="pid" ColumnName="pid" />
+                <ScalarProperty Name="oaddress" ColumnName="oaddress" />
+                <ScalarProperty Name="ophone" ColumnName="ophone" />
+                <ScalarProperty Name="quantity" ColumnName="quantity" />
+                <ScalarProperty Name="o_size" ColumnName="o_size" />
+                <ScalarProperty Name="o_picktime" ColumnName="o_picktime" />
+                <ScalarProperty Name="o_servicetime" ColumnName="o_servicetime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="product">
+            <EntityTypeMapping TypeName="cakeModel.product">
+              <MappingFragment StoreEntitySet="product">
+                <ScalarProperty Name="pid" ColumnName="pid" />
+                <ScalarProperty Name="pname" ColumnName="pname" />
+                <ScalarProperty Name="pclassify" ColumnName="pclassify" />
+                <ScalarProperty Name="pprice" ColumnName="pprice" />
+                <ScalarProperty Name="pimg" ColumnName="pimg" />
+                <ScalarProperty Name="pdsc" ColumnName="pdsc" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="size">
+            <EntityTypeMapping TypeName="cakeModel.size">
+              <MappingFragment StoreEntitySet="size">
+                <ScalarProperty Name="sid" ColumnName="sid" />
+                <ScalarProperty Name="ssize" ColumnName="ssize" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="users">
+            <EntityTypeMapping TypeName="cakeModel.users">
+              <MappingFragment StoreEntitySet="users">
+                <ScalarProperty Name="uid" ColumnName="uid" />
+                <ScalarProperty Name="uaccount" ColumnName="uaccount" />
+                <ScalarProperty Name="upwd" ColumnName="upwd" />
+                <ScalarProperty Name="uphone" ColumnName="uphone" />
+                <ScalarProperty Name="uemail" ColumnName="uemail" />
+                <ScalarProperty Name="uaddress" ColumnName="uaddress" />
+                <ScalarProperty Name="ubuy" ColumnName="ubuy" />
+                <ScalarProperty Name="uimage" ColumnName="uimage" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CartView">
+            <EntityTypeMapping TypeName="cakeModel.CartView">
+              <MappingFragment StoreEntitySet="CartView">
+                <ScalarProperty Name="cid" ColumnName="cid" />
+                <ScalarProperty Name="uid" ColumnName="uid" />
+                <ScalarProperty Name="pid" ColumnName="pid" />
+                <ScalarProperty Name="quantity" ColumnName="quantity" />
+                <ScalarProperty Name="size" ColumnName="size" />
+                <ScalarProperty Name="pname" ColumnName="pname" />
+                <ScalarProperty Name="pimg" ColumnName="pimg" />
+                <ScalarProperty Name="pprice" ColumnName="pprice" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_address">
+            <EntityTypeMapping TypeName="cakeModel.View_address">
+              <MappingFragment StoreEntitySet="View_address">
+                <ScalarProperty Name="aid" ColumnName="aid" />
+                <ScalarProperty Name="uid" ColumnName="uid" />
+                <ScalarProperty Name="uaccount" ColumnName="uaccount" />
+                <ScalarProperty Name="addressName" ColumnName="addressName" />
+                <ScalarProperty Name="phone" ColumnName="phone" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_hot">
+            <EntityTypeMapping TypeName="cakeModel.View_hot">
+              <MappingFragment StoreEntitySet="View_hot">
+                <ScalarProperty Name="oid" ColumnName="oid" />
+                <ScalarProperty Name="pid" ColumnName="pid" />
+                <ScalarProperty Name="quantity" ColumnName="quantity" />
+                <ScalarProperty Name="pname" ColumnName="pname" />
+                <ScalarProperty Name="pprice" ColumnName="pprice" />
+                <ScalarProperty Name="pimg" ColumnName="pimg" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_orders">
+            <EntityTypeMapping TypeName="cakeModel.View_orders">
+              <MappingFragment StoreEntitySet="View_orders">
+                <ScalarProperty Name="oid" ColumnName="oid" />
+                <ScalarProperty Name="pid" ColumnName="pid" />
+                <ScalarProperty Name="uid" ColumnName="uid" />
+                <ScalarProperty Name="pimg" ColumnName="pimg" />
+                <ScalarProperty Name="pname" ColumnName="pname" />
+                <ScalarProperty Name="pprice" ColumnName="pprice" />
+                <ScalarProperty Name="ssize" ColumnName="ssize" />
+                <ScalarProperty Name="quantity" ColumnName="quantity" />
+                <ScalarProperty Name="oaddress" ColumnName="oaddress" />
+                <ScalarProperty Name="o_picktime" ColumnName="o_picktime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_orderss">
+            <EntityTypeMapping TypeName="cakeModel.View_orderss">
+              <MappingFragment StoreEntitySet="View_orderss">
+                <ScalarProperty Name="uaccount" ColumnName="uaccount" />
+                <ScalarProperty Name="oid" ColumnName="oid" />
+                <ScalarProperty Name="pid" ColumnName="pid" />
+                <ScalarProperty Name="uid" ColumnName="uid" />
+                <ScalarProperty Name="pimg" ColumnName="pimg" />
+                <ScalarProperty Name="pname" ColumnName="pname" />
+                <ScalarProperty Name="pprice" ColumnName="pprice" />
+                <ScalarProperty Name="ssize" ColumnName="ssize" />
+                <ScalarProperty Name="quantity" ColumnName="quantity" />
+                <ScalarProperty Name="oaddress" ColumnName="oaddress" />
+                <ScalarProperty Name="o_picktime" ColumnName="o_picktime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_Pro">
+            <EntityTypeMapping TypeName="cakeModel.View_Pro">
+              <MappingFragment StoreEntitySet="View_Pro">
+                <ScalarProperty Name="pid" ColumnName="pid" />
+                <ScalarProperty Name="pname" ColumnName="pname" />
+                <ScalarProperty Name="pclassify" ColumnName="pclassify" />
+                <ScalarProperty Name="pprice" ColumnName="pprice" />
+                <ScalarProperty Name="pimg" ColumnName="pimg" />
+                <ScalarProperty Name="pdsc" ColumnName="pdsc" />
+                <ScalarProperty Name="cid" ColumnName="cid" />
+                <ScalarProperty Name="cname" ColumnName="cname" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="无" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
